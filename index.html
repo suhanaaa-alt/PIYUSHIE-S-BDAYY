@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Piyushi ❤️</title>
+    <style>
+        /* This section makes everything PINK */
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background-color: #ffe4e1; /* Light Pink Background */
+            color: #d63384; 
+            text-align: center; 
+            padding: 20px;
+        }
+        h1 { color: #c71585; margin-bottom: 5px; }
+        .subtitle { font-size: 1.2rem; margin-bottom: 30px; color: #db7093; }
+        
+        /* The Grid for the numbers */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+            gap: 12px; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
+        /* The Pink Cards */
+        .day-card { 
+            aspect-ratio: 1/1; 
+            background: #ffb6c1; /* Medium Pink */
+            color: white;
+            border-radius: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            transition: 0.3s; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .day-card.locked { 
+            background: #fbcce7; 
+            cursor: not-allowed; 
+            opacity: 0.5; 
+        }
+
+        .day-card:hover:not(.locked) { 
+            background: #ff69b4; /* Bright Hot Pink on hover */
+            transform: translateY(-5px);
+        }
+
+        /* The Pop-up Note */
+        #modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 182, 193, 0.8); /* Pink tinted overlay */
+            align-items: center; justify-content: center; 
+            padding: 20px; 
+        }
+        .modal-content { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 30px; 
+            max-width: 400px; 
+            position: relative; 
+            border: 5px solid #ff69b4;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .close-btn { 
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome Piyushi ❤️</h1>
+    <p class="subtitle">A special note for every day until your birthday!</p>
+    
+    <div class="grid" id="calendar-grid"></div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h2 id="modal-day-title" style="color: #ff69b4;"></h2>
+            <p id="modal-text" style="font-size: 1.1rem; line-height: 1.6;"></p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // EDIT YOUR DAILY NOTES HERE!
+        const birthdayMessages = {
+ "2025-12-30": "Welcome to your countdown, Piyushi! I'm starting this today because every day with you is worth celebrating.",
+            "2025-12-31": "Happy New Year's Eve! My favorite part of last year was you.",
+            "2026-01-01": "Happy New Year! I can't wait to spend all of 2026 by your side.",
+            "2026-01-02": "now starts the real fun, your birthday month.",
+            "2026-01-03": "every day of january is worth celebrating, as this month is entirely ours! my love!",
+            "2026-01-04": "i love you more and more everyday",
+            "2026-01-05": "your presence is my favourite part of life",
+            "2026-01-06":  "you've shown me what true love is",
+            "2026-01-07": "tysm for loving me so much babyyy",S
+            "2026-01-08": "you're my greatest blessing ilysmmm",
+            "2026-01-09": "you're my personal rohit sharma",
+            "2026-01-10": "we have the best bond ever",
+            "2026-01-11": "i'm always gonna be there for you, right by your side",
+            "2026-01-12": "nothings ever gonna change the way i love you and admire you",
+            "2026-01-13":   "i'm damn you're gonna make mummy papa and me proud",
+            "2026-01-14":  "i can leave anyone if its meant for you i hope yk thatv my love",
+            "2026-01-15":  "ik i have hurt you a lot in the past but i'm never gonna repeat that ever again",
+            "2026-01-16": "nobody can love me like you, and no ones gonna love you more than me",
+            "2026-01-17": "not even the ocean of words would be enough to tell you how much i love you",
+            "2026-01-18":  "you're ,my virat kohli and i'm your anushka sharma.",
+            "2026-01-19":  "you're my favourite cricketer, also the hottest one",
+            "2026-01-19": "i love the fact that i get to be called your boyfriend",
+            "2026-01-20": "ik not every day goes well for us, we may have faught too, but trust me ily more than i have ever said",
+            "2026-01-21": "every little effort of yours means the world to me",
+            "2026-01-22": "ik i am surely not the "PERFECT" girlfriend, but i try my best to love you in every way possible",
+            "2026-01-23":  "letsss goo 7 days to for you birthdayyyyyyy", 
+            "2026-01-24":  "i love you soo so muchh piyushiii i hope you know that choosing you was the best choice i ever made",
+            "2026-01-25": "we're gonna marry and have 3 cutee kidssss okayyy?",
+            "2026-01-26": "PIYUSHIIIIIIEEEEE I LOVE YOUU SOO SOO MUCHHH MYY JAANUUUU",
+            "2026-01-27": "i'm always js too proud of you!!!!",
+            "2026-01-28": "thankyou soo much for loving me more than i deserve",
+            "2026-01-29": "i'm never gonna leave your side, ever.",
+            "2026-01-30": 'happiesttt birthdayyyyyyy piyushieeeee and happyy 4 years of togetherness to ussss ILYSMMMM JAANUUUU, YOU ARE THE BEST THING THAT HAPPENED TO  ME" 
+
+     
+        };
+
+        const grid = document.getElementById('calendar-grid');
+        const startDate = new Date("2025-12-30T00:00:00");
+        const today = new Date();
+
+        for (let i = 0; i < 32; i++) {
+            let cardDate = new Date(startDate);
+            cardDate.setDate(startDate.getDate() + i);
+            
+            const dateStr = cardDate.toISOString().split('T')[0];
+            const card = document.createElement('div');
+            card.className = 'day-card';
+            card.innerText = i + 1;
+
+            // Check if the date is in the future
+            if (cardDate > today) {
+                card.classList.add('locked');
+                card.onclick = () => alert("Oops! This note doesn't unlock until " + dateStr);
+            } else {
+                card.onclick = () => openModal(i + 1, birthdayMessages[dateStr] || "I love you! (Don't forget to write a note for this day in the code)");
+            }
+            
+            grid.appendChild(card);
+        }
+
+        function openModal(day, text) {
+            document.getElementById('modal-day-title').innerText = "Day " + day;
+            document.getElementById('modal-text').innerText = text;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
